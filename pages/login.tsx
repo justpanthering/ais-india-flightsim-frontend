@@ -8,12 +8,23 @@ import {
   InputGroup,
   Box,
   Center,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import { Form, Field, Formik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/client";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { hashPassword } from "../lib/auth/bcrypt";
+import useLogin from "../hooks/useLogin";
+import { ILogin } from "../types";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState<boolean>();
+  const [session, loading] = useSession();
+  const router = useRouter();
+  const { error, setError } = useLogin();
 
   const initialValues = { username: "", password: "" };
 
@@ -21,16 +32,37 @@ export default function Login() {
     setShowPassword((prev) => !prev);
   }
 
+  useEffect(() => {
+    console.log(router.query);
+    if (router.query.error === "CredentialsSignin") {
+      setError("Invalid username or password.");
+    }
+  }, [router]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  } else if (session) {
+    router.push("/");
+    return <p>Redirecting...</p>;
+  }
+
   return (
     <Center h="100vh">
       <Box borderWidth="1px" borderRadius="lg" p="6" width="500px">
+        {error && (
+          <Alert status="error" marginBottom="1rem">
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
         <Formik
           initialValues={initialValues}
-          onSubmit={(values, actions) => {
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              actions.setSubmitting(false);
-            }, 1000);
+          onSubmit={async (values, actions) => {
+            await signIn("credentials", {
+              username: values.username,
+              password: values.password,
+              callbackUrl: `${window.location.origin}/admin`,
+            });
           }}
         >
           {({ errors, touched, isSubmitting }) => (
