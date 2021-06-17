@@ -1,19 +1,30 @@
 import React from "react";
 import Link from "next/link";
 import { Box, Button, Flex, Spacer, HStack } from "@chakra-ui/react";
-import { useRouter } from "next/dist/client/router";
+import { signIn, signOut, useSession } from "next-auth/client";
+import { useRouter } from "next/router";
 
 const routes = {
   home: "/",
   login: "/login",
+  admin: {
+    dashboard: "/admin",
+  },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const [session, loading] = useSession();
   const router = useRouter();
-  const currentPath = router.pathname;
   return (
     <>
-      <Box bg="tomato" p="1rem 2rem" color="white" w="100%" position="fixed">
+      <Box
+        bg="tomato"
+        p="1rem 2rem"
+        color="white"
+        w="100%"
+        position="fixed"
+        height="4rem"
+      >
         <Flex alignItems="center">
           Aeronautical Information System - India
           <HStack marginLeft="2rem">
@@ -22,12 +33,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </Link>
           </HStack>
           <Spacer />
-          <Link href={routes.login}>
-            <a>Login</a>
-          </Link>
+          {(loading || !session) && router.pathname !== routes.login && (
+            <Button onClick={() => signIn()}>Login</Button>
+          )}
+          {session && (
+            <HStack>
+              <Link href={routes.admin.dashboard}>Dashboard</Link>
+              <Button onClick={() => signOut()}>Logout</Button>
+            </HStack>
+          )}
         </Flex>
       </Box>
-      {children}
+      <div style={{ paddingTop: "4rem" }}>{children}</div>
     </>
   );
 }
