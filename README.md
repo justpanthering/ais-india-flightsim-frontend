@@ -1,4 +1,9 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## About This Project
+
+Web application to access information about various airports across India, primarily meant for flight simulation enthusiasts (such as Microsoft Flight Simulator 2020, XPlane 11, etc). Developed using Next.js to make use of Static Site Generation, Server Side Rendering, as well as client side rendering as necessary, as well as implement Express.js-like backend for database CRUD using Next.js API Routes.
+
+Technology Stack: Next.js, Chakra-UI, Next-Auth, Prisma, Typescript
+
 ## Environment Variables
 NEXTAUTH_URL:http//hostname:PORT
 
@@ -14,6 +19,8 @@ See the documentation for all the connection string options: https://pris.ly/d/c
 DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 
 ## Getting Started
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 First, run the development server:
 
