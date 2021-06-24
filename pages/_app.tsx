@@ -1,10 +1,11 @@
+import React from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import Layout from "../components/layout";
 import { Provider } from "next-auth/client";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <Provider session={pageProps.session}>
       <ChakraProvider>

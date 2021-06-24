@@ -12,7 +12,11 @@ const routes = {
   },
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element {
   const [session, loading] = useSession();
   const router = useRouter();
   return (
