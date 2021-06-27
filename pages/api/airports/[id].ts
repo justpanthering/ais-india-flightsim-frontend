@@ -31,7 +31,46 @@ export default async (
             });
             return resolve(res);
           }
-          res.status(200).json({ airport });
+          res.status(200).json({
+            ...airport,
+            runways: airport.runways.map((runway) => ({
+              ...runway,
+              coordinates: {
+                latitude: {
+                  measurement: runway.latitudeMeasurement,
+                  hemisphere: runway.latitudeHemisphere,
+                },
+                longitude: {
+                  measurement: runway.longitudeMeasurement,
+                  hemisphere: runway.longitudeHemisphere,
+                },
+              },
+              radarTrafficCommunicationFrequency:
+                airport.radarTrafficCommunicationFrequency.map(
+                  (freq) => freq.frequency
+                ),
+              towerTrafficCommunicationFrequency:
+                airport.towerTrafficCommunicationFrequency.map(
+                  (freq) => freq.frequency
+                ),
+              controlTrafficCommunicationFrequency:
+                airport.controlTrafficCommunicationFrequency.map(
+                  (freq) => freq.frequency
+                ),
+              approachTrafficCommunicationFrequency:
+                airport.approachTrafficCommunicationFrequency.map(
+                  (freq) => freq.frequency
+                ),
+              groundTrafficCommunicationFrequency:
+                airport.groundTrafficCommunicationFrequency.map(
+                  (freq) => freq.frequency
+                ),
+              informationTrafficCommunicationFrequency:
+                airport.informationTrafficCommunicationFrequency.map(
+                  (freq) => freq.frequency
+                ),
+            })),
+          });
           return resolve(res);
         });
     } else {

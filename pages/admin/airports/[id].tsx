@@ -21,15 +21,22 @@ import * as Yup from "yup";
 import GroupWithHeader from "../../../components/GroupWithHeader";
 import CoordinatesInput from "../../../components/customInputs/coordinates";
 import FormikField from "../../../components/formik/formikFields";
-import { createAirport } from "../../../api-client/airport";
+import { createAirport, getAirportDetail } from "../../../api-client/airport";
 import { Airport } from "../../../types";
 import { useSession } from "next-auth/client";
-import router from "next/router";
-import { pathAdminAirport } from "../../../utils/routes";
+import { useRouter } from "next/router";
+import { pathAdmin } from "../../../utils/routes";
+import { GetStaticPropsResult } from "next";
 
-export default function create(): JSX.Element | null {
+interface Props {
+  airport: Airport | null;
+}
+
+export default function ({ airport }: Props): JSX.Element | null {
   const [session, loading] = useSession();
   const toast = useToast();
+  const router = useRouter();
+  console.log(airport);
 
   if (loading) {
     return null;
@@ -37,6 +44,7 @@ export default function create(): JSX.Element | null {
   if (!loading && !session) {
     router.push("/");
   }
+
   const initialValues: Airport = {
     icao: "",
     localeName: "",
@@ -138,11 +146,45 @@ export default function create(): JSX.Element | null {
       </Head>
       <Box p="1rem 2rem" maxW="1080px">
         <Formik
-          initialValues={initialValues}
+          initialValues={airport || initialValues}
           onSubmit={async (values) => {
-            console.log(values);
+            // console.log(values);
+            const parsedValues: Airport = {
+              ...values,
+              elevation: Number(values.elevation),
+              runways: values.runways.map((runway) => ({
+                ...runway,
+                dimension: Number(runway.dimension),
+                elevation: Number(runway.elevation),
+              })),
+              radarTrafficCommunicationFrequency:
+                values.radarTrafficCommunicationFrequency.map((freq) =>
+                  Number(freq)
+                ),
+              towerTrafficCommunicationFrequency:
+                values.towerTrafficCommunicationFrequency.map((freq) =>
+                  Number(freq)
+                ),
+              controlTrafficCommunicationFrequency:
+                values.controlTrafficCommunicationFrequency.map((freq) =>
+                  Number(freq)
+                ),
+              approachTrafficCommunicationFrequency:
+                values.approachTrafficCommunicationFrequency.map((freq) =>
+                  Number(freq)
+                ),
+              groundTrafficCommunicationFrequency:
+                values.groundTrafficCommunicationFrequency.map((freq) =>
+                  Number(freq)
+                ),
+              informationTrafficCommunicationFrequency:
+                values.informationTrafficCommunicationFrequency.map((freq) =>
+                  Number(freq)
+                ),
+            };
+            console.log(parsedValues);
             try {
-              const res = await createAirport(values);
+              const res = await createAirport(parsedValues);
               console.log("response: ", res);
               toast({
                 title: `Success!`,
@@ -150,7 +192,7 @@ export default function create(): JSX.Element | null {
                 status: "success",
                 isClosable: true,
               });
-              router.push(pathAdminAirport);
+              router.push(pathAdmin);
             } catch (e) {
               console.error(e);
               toast({
@@ -244,9 +286,7 @@ export default function create(): JSX.Element | null {
                     <InputGroup size="sm">
                       <NumberInput
                         {...props}
-                        onChange={(val) =>
-                          setFieldValue(props.name, Number(val))
-                        }
+                        onChange={(val) => setFieldValue(props.name, val)}
                         step={0.5}
                         id="elevation"
                       >
@@ -312,7 +352,7 @@ export default function create(): JSX.Element | null {
                               <FormikField
                                 name={`runways[${i}].dimension`}
                                 label="Dimension"
-                                helperText="Runway dimension in feet"
+                                helperText="Runway dimension in meters"
                                 errorNameArr={[`runways[${i}].dimension`]}
                                 touched={touched}
                                 errors={errors}
@@ -322,7 +362,7 @@ export default function create(): JSX.Element | null {
                                     <NumberInput
                                       {...props}
                                       onChange={(val) =>
-                                        setFieldValue(props.name, Number(val))
+                                        setFieldValue(props.name, val)
                                       }
                                       step={0.5}
                                       id={`runways_${i}_dimension`}
@@ -333,7 +373,7 @@ export default function create(): JSX.Element | null {
                                         <NumberDecrementStepper />
                                       </NumberInputStepper>
                                     </NumberInput>
-                                    <InputRightAddon>feet</InputRightAddon>
+                                    <InputRightAddon>meters</InputRightAddon>
                                   </InputGroup>
                                 )}
                               />
@@ -390,7 +430,7 @@ export default function create(): JSX.Element | null {
                                       {...props}
                                       id={`runways.${i}.elevation`}
                                       onChange={(val) =>
-                                        setFieldValue(props.name, Number(val))
+                                        setFieldValue(props.name, val)
                                       }
                                       step={0.5}
                                     >
@@ -548,9 +588,10 @@ export default function create(): JSX.Element | null {
                                       <NumberInput
                                         {...props}
                                         onChange={(val) =>
-                                          setFieldValue(props.name, Number(val))
+                                          setFieldValue(props.name, val)
                                         }
-                                        step={0.5}
+                                        precision={3}
+                                        step={0.005}
                                         id={`radarTrafficCommunicationFrequency_${i}`}
                                       >
                                         <NumberInputField />
@@ -608,9 +649,10 @@ export default function create(): JSX.Element | null {
                                       <NumberInput
                                         {...props}
                                         onChange={(val) =>
-                                          setFieldValue(props.name, Number(val))
+                                          setFieldValue(props.name, val)
                                         }
-                                        step={0.5}
+                                        precision={3}
+                                        step={0.005}
                                         id={`towerTrafficCommunicationFrequency_${i}`}
                                       >
                                         <NumberInputField />
@@ -669,9 +711,10 @@ export default function create(): JSX.Element | null {
                                       <NumberInput
                                         {...props}
                                         onChange={(val) =>
-                                          setFieldValue(props.name, Number(val))
+                                          setFieldValue(props.name, val)
                                         }
-                                        step={0.5}
+                                        precision={3}
+                                        step={0.005}
                                         id={`controlTrafficCommunicationFrequency_${i}`}
                                       >
                                         <NumberInputField />
@@ -730,9 +773,10 @@ export default function create(): JSX.Element | null {
                                       <NumberInput
                                         {...props}
                                         onChange={(val) =>
-                                          setFieldValue(props.name, Number(val))
+                                          setFieldValue(props.name, val)
                                         }
-                                        step={0.5}
+                                        precision={3}
+                                        step={0.005}
                                         id={`approachTrafficCommunicationFrequency_${i}`}
                                       >
                                         <NumberInputField />
@@ -786,11 +830,24 @@ export default function create(): JSX.Element | null {
                                   errors={errors}
                                   isRequired
                                   render={(props: FieldInputProps<any>) => (
-                                    <Input
-                                      {...props}
-                                      placeholder="Eg. 27L"
-                                      id={`groundTrafficCommunicationFrequency_${i}`}
-                                    />
+                                    <InputGroup size="sm">
+                                      <NumberInput
+                                        {...props}
+                                        onChange={(val) =>
+                                          setFieldValue(props.name, val)
+                                        }
+                                        precision={3}
+                                        step={0.005}
+                                        id={`groundTrafficCommunicationFrequency_${i}`}
+                                      >
+                                        <NumberInputField />
+                                        <NumberInputStepper>
+                                          <NumberIncrementStepper />
+                                          <NumberDecrementStepper />
+                                        </NumberInputStepper>
+                                      </NumberInput>
+                                      <InputRightAddon>FM</InputRightAddon>
+                                    </InputGroup>
                                   )}
                                 />
                                 <Button
@@ -835,11 +892,24 @@ export default function create(): JSX.Element | null {
                                   errors={errors}
                                   isRequired
                                   render={(props: FieldInputProps<any>) => (
-                                    <Input
-                                      {...props}
-                                      placeholder="Eg. 27L"
-                                      id={`informationTrafficCommunicationFrequency_${i}`}
-                                    />
+                                    <InputGroup size="sm">
+                                      <NumberInput
+                                        {...props}
+                                        onChange={(val) =>
+                                          setFieldValue(props.name, val)
+                                        }
+                                        precision={3}
+                                        step={0.005}
+                                        id={`informationTrafficCommunicationFrequency_${i}`}
+                                      >
+                                        <NumberInputField />
+                                        <NumberInputStepper>
+                                          <NumberIncrementStepper />
+                                          <NumberDecrementStepper />
+                                        </NumberInputStepper>
+                                      </NumberInput>
+                                      <InputRightAddon>FM</InputRightAddon>
+                                    </InputGroup>
                                   )}
                                 />
                                 <Button
@@ -875,4 +945,17 @@ export default function create(): JSX.Element | null {
       </Box>
     </>
   );
+}
+
+export async function getServerSideProps(
+  context: any
+): Promise<GetStaticPropsResult<Props>> {
+  const { id } = context.params;
+  let res: Airport | undefined;
+  if (id !== "create") {
+    res = await getAirportDetail(Number(id));
+  }
+  return {
+    props: { airport: res || null },
+  };
 }

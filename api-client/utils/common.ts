@@ -1,4 +1,6 @@
-import { flattenDeep, template } from "lodash";
+import { flattenDeep, template, templateSettings } from "lodash";
+
+templateSettings.interpolate = /{{([\s\S]+?)}}/g;
 
 export function createPath(
   pathTemplate: readonly any[],

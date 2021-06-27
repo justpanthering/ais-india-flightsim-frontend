@@ -2,9 +2,9 @@ import { AxiosResponse } from "axios";
 import { Airport } from "../types";
 import { apiRouteInstance } from "./client";
 import {
+  apiAirportDetailPath,
   apiAirportsCreatePath,
   apiAirportsPath,
-  API_BASE_URL,
 } from "./constants";
 import { createPath } from "./utils";
 
@@ -26,4 +26,11 @@ export function getAirportList(
   return apiRouteInstance.client.get<Airport[]>(createPath(apiAirportsPath), {
     params: { filter: query },
   });
+}
+
+export async function getAirportDetail(airportId: number): Promise<Airport> {
+  const res = await apiRouteInstance.client.get<{ airport: Airport }>(
+    createPath(apiAirportDetailPath, { airportId })
+  );
+  return res.data.airport;
 }
