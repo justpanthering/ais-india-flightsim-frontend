@@ -24,7 +24,6 @@ export default NextAuth({
           // Return null if user data could not be retrieved
           return null;
         } catch (e) {
-          console.error("error:", e.message);
           return null;
         }
       },

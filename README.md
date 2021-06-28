@@ -5,18 +5,11 @@ Web application to access information about various airports across India, prima
 Technology Stack: Next.js, Chakra-UI, Next-Auth, Prisma, Typescript
 
 ## Environment Variables
-NEXTAUTH_URL:http//hostname:PORT
-
-Prisma vaiables:
-
-
-Environment variables declared in this file are automatically made available to Prisma.
-See the documentation for more detail: https://pris.ly/d/prisma-schema#using-environment-variables
-
-Prisma supports the native connection string format for PostgreSQL, MySQL and SQLite.
-See the documentation for all the connection string options: https://pris.ly/d/connection-strings
-
-DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+- .env.local
+  - NEXTAUTH_URL:http//hostname:PORT
+  - API_BASE_URL=http://hostname:PORT/api
+- .env
+  - DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 
 ## Getting Started
 

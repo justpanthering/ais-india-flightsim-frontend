@@ -14,6 +14,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "gatsby-config.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "gatsby-config.ts", "prisma-query.mts"],
   "exclude": ["node_modules"]
 }

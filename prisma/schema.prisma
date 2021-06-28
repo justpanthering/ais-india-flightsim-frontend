@@ -2,8 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -11,10 +11,62 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   firstName String
   lastName  String
-  email     String   @unique
+  email     String    @unique
   password  String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  Airport Airport[] // Relation definition
+}
+
+model Airport {
+  id                   Int    @id @default(autoincrement())
+  icao                 String @unique
+  localeName           String
+  aerodomeName         String
+  author               User   @relation(fields: [authorId], references: [id]) // Relation definition, foreign key definition
+  authorId             Int // Foreign key that relates to user
+  latitudeMeasurement  Float
+  latitudeHemisphere   String
+  longitudeMeasurement Float
+  longitudeHemisphere  String
+  elevation            Float
+  address              String
+
+  runways                                  Runway[]
+  radarTrafficCommunicationFrequency       Float[]
+  approachTrafficCommunicationFrequency    Float[]
+  towerTrafficCommunicationFrequency       Float[]
+  controlTrafficCommunicationFrequency     Float[]
+  informationTrafficCommunicationFrequency Float[]
+  groundTrafficCommunicationFrequency      Float[]
+  charts                                   Chart[]
+  createdAt                                DateTime @default(now())
+  updatedAt                                DateTime @updatedAt
+}
+
+model Runway {
+  id                          Int     @id @default(autoincrement())
+  airport                     Airport @relation(fields: [airportId], references: [id])
+  airportId                   Int
+  name                        String
+  dimension                   Float
+  surface                     String
+  latitudeMeasurement         Float
+  latitudeHemisphere          String
+  longitudeMeasurement        Float
+  longitudeHemisphere         String
+  elevation                   Float
+  visualSlopeIndicationSystem String?
+}
+
+model Chart {
+  id        Int     @id @default(autoincrement())
+  name      String
+  url       String
+  airport   Airport @relation(fields: [airportId], references: [id])
+  airportId Int
 }
