@@ -2,8 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -37,15 +37,15 @@ model Airport {
   address              String
 
   runways                                  Runway[]
-  radarTrafficCommunicationFrequency       RadarTrafficCommunicationFrequency[]
-  approachTrafficCommunicationFrequency    ApproachTrafficCommunicationFrequency[]
-  towerTrafficCommunicationFrequency       TowerTrafficCommunicationFrequency[]
-  controlTrafficCommunicationFrequency     ControlTrafficCommunicationFrequency[]
-  informationTrafficCommunicationFrequency InformationTrafficCommunicationFrequency[]
-  groundTrafficCommunicationFrequency      GroundTrafficCommunicationFrequency[]
+  radarTrafficCommunicationFrequency       Float[]
+  approachTrafficCommunicationFrequency    Float[]
+  towerTrafficCommunicationFrequency       Float[]
+  controlTrafficCommunicationFrequency     Float[]
+  informationTrafficCommunicationFrequency Float[]
+  groundTrafficCommunicationFrequency      Float[]
   charts                                   Chart[]
-  createdAt                                DateTime                                   @default(now())
-  updatedAt                                DateTime                                   @updatedAt
+  createdAt                                DateTime @default(now())
+  updatedAt                                DateTime @updatedAt
 }
 
 model Runway {
@@ -61,48 +61,6 @@ model Runway {
   longitudeHemisphere         String
   elevation                   Float
   visualSlopeIndicationSystem String?
-}
-
-model RadarTrafficCommunicationFrequency {
-  id        Int     @id @default(autoincrement())
-  frequency Float
-  airport   Airport @relation(fields: [airportId], references: [id])
-  airportId Int
-}
-
-model ApproachTrafficCommunicationFrequency {
-  id        Int     @id @default(autoincrement())
-  frequency Float
-  airport   Airport @relation(fields: [airportId], references: [id])
-  airportId Int
-}
-
-model TowerTrafficCommunicationFrequency {
-  id        Int     @id @default(autoincrement())
-  frequency Float
-  airport   Airport @relation(fields: [airportId], references: [id])
-  airportId Int
-}
-
-model ControlTrafficCommunicationFrequency {
-  id        Int     @id @default(autoincrement())
-  frequency Float
-  airport   Airport @relation(fields: [airportId], references: [id])
-  airportId Int
-}
-
-model InformationTrafficCommunicationFrequency {
-  id        Int     @id @default(autoincrement())
-  frequency Float
-  airport   Airport @relation(fields: [airportId], references: [id])
-  airportId Int
-}
-
-model GroundTrafficCommunicationFrequency {
-  id        Int     @id @default(autoincrement())
-  frequency Float
-  airport   Airport @relation(fields: [airportId], references: [id])
-  airportId Int
 }
 
 model Chart {

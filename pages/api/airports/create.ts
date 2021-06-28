@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
+import { getRunwayDetailsForDatabase } from "../../../lib/api/airports";
 import prisma from "../../../lib/prisma/prisma";
 import { Airport } from "../../../types";
 
@@ -59,74 +60,31 @@ export default async (
                           elevation: airportData.elevation,
                           address: airportData.address,
                           runways: {
-                            create: airportData.runways.map((runway) => ({
-                              name: runway.name,
-                              dimension: runway.dimension,
-                              surface: runway.surface,
-                              elevation: runway.elevation,
-                              latitudeMeasurement:
-                                runway.coordinates.latitude.measurement,
-                              latitudeHemisphere:
-                                runway.coordinates.latitude.hemisphere,
-                              longitudeMeasurement:
-                                runway.coordinates.longitude.measurement,
-                              longitudeHemisphere:
-                                runway.coordinates.longitude.hemisphere,
-                              visualSlopeIndicationSystem:
-                                runway.visualSlopeIndicationSystem,
-                            })),
+                            create: airportData.runways.map((runway) =>
+                              getRunwayDetailsForDatabase(runway)
+                            ),
                           },
                           charts: {
                             create: airportData.charts.map((chart) => ({
                               ...chart,
                             })),
                           },
-                          approachTrafficCommunicationFrequency: {
-                            create:
-                              airportData.approachTrafficCommunicationFrequency.map(
-                                (frequency) => ({ frequency })
-                              ),
-                          },
-                          controlTrafficCommunicationFrequency: {
-                            create:
-                              airportData.controlTrafficCommunicationFrequency.map(
-                                (frequency) => ({ frequency })
-                              ),
-                          },
-                          groundTrafficCommunicationFrequency: {
-                            create:
-                              airportData.groundTrafficCommunicationFrequency.map(
-                                (frequency) => ({ frequency })
-                              ),
-                          },
-                          informationTrafficCommunicationFrequency: {
-                            create:
-                              airportData.informationTrafficCommunicationFrequency.map(
-                                (frequency) => ({ frequency })
-                              ),
-                          },
-                          radarTrafficCommunicationFrequency: {
-                            create:
-                              airportData.radarTrafficCommunicationFrequency.map(
-                                (frequency) => ({ frequency })
-                              ),
-                          },
-                          towerTrafficCommunicationFrequency: {
-                            create:
-                              airportData.towerTrafficCommunicationFrequency.map(
-                                (frequency) => ({ frequency })
-                              ),
-                          },
+                          approachTrafficCommunicationFrequency:
+                            airportData.approachTrafficCommunicationFrequency,
+                          controlTrafficCommunicationFrequency:
+                            airportData.controlTrafficCommunicationFrequency,
+                          groundTrafficCommunicationFrequency:
+                            airportData.groundTrafficCommunicationFrequency,
+                          informationTrafficCommunicationFrequency:
+                            airportData.informationTrafficCommunicationFrequency,
+                          radarTrafficCommunicationFrequency:
+                            airportData.radarTrafficCommunicationFrequency,
+                          towerTrafficCommunicationFrequency:
+                            airportData.towerTrafficCommunicationFrequency,
                         },
                         include: {
                           runways: true,
                           charts: true,
-                          approachTrafficCommunicationFrequency: true,
-                          controlTrafficCommunicationFrequency: true,
-                          groundTrafficCommunicationFrequency: true,
-                          informationTrafficCommunicationFrequency: true,
-                          radarTrafficCommunicationFrequency: true,
-                          towerTrafficCommunicationFrequency: true,
                         },
                       })
                       .then((airport) => {

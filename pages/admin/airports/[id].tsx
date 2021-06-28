@@ -16,12 +16,16 @@ import {
 } from "@chakra-ui/react";
 import { FieldArray, FieldInputProps, Form, Formik } from "formik";
 import Head from "next/head";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import GroupWithHeader from "../../../components/GroupWithHeader";
 import CoordinatesInput from "../../../components/customInputs/coordinates";
 import FormikField from "../../../components/formik/formikFields";
-import { createAirport, getAirportDetail } from "../../../api-client/airport";
+import {
+  createAirport,
+  getAirportDetail,
+  updateAirportDetail,
+} from "../../../api-client/airport";
 import { Airport } from "../../../types";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
@@ -29,14 +33,22 @@ import { pathAdmin } from "../../../utils/routes";
 import { GetStaticPropsResult } from "next";
 
 interface Props {
-  airport: Airport | null;
+  airportFromServerProps: Airport | null;
 }
 
-export default function ({ airport }: Props): JSX.Element | null {
+export default function ({
+  airportFromServerProps,
+}: Props): JSX.Element | null {
+  const [airport, setAirport] = useState<Airport>();
+  useEffect(() => {
+    if (airportFromServerProps) {
+      setAirport(airportFromServerProps);
+    }
+  }, [airportFromServerProps]);
+
   const [session, loading] = useSession();
   const toast = useToast();
   const router = useRouter();
-  console.log(airport);
 
   if (loading) {
     return null;
@@ -183,24 +195,46 @@ export default function ({ airport }: Props): JSX.Element | null {
                 ),
             };
             console.log(parsedValues);
-            try {
-              const res = await createAirport(parsedValues);
-              console.log("response: ", res);
-              toast({
-                title: `Success!`,
-                description: "Airport created successfully",
-                status: "success",
-                isClosable: true,
-              });
-              router.push(pathAdmin);
-            } catch (e) {
-              console.error(e);
-              toast({
-                title: `Error!`,
-                description: e.message,
-                status: "error",
-                isClosable: true,
-              });
+            if (airport && airport.id) {
+              try {
+                const res = await updateAirportDetail(airport.id, parsedValues);
+                console.log("response: ", res);
+                toast({
+                  title: `Success!`,
+                  description: "Airport created successfully",
+                  status: "success",
+                  isClosable: true,
+                });
+                setAirport(res);
+              } catch (e) {
+                console.error(e);
+                toast({
+                  title: `Error!`,
+                  description: e.message,
+                  status: "error",
+                  isClosable: true,
+                });
+              }
+            } else {
+              try {
+                const res = await createAirport(parsedValues);
+                console.log("response: ", res);
+                toast({
+                  title: `Success!`,
+                  description: "Airport created successfully",
+                  status: "success",
+                  isClosable: true,
+                });
+                router.push(pathAdmin);
+              } catch (e) {
+                console.error(e.message);
+                toast({
+                  title: `Error!`,
+                  description: e.message,
+                  status: "error",
+                  isClosable: true,
+                });
+              }
             }
           }}
           validationSchema={airportCreateSchema}
@@ -956,6 +990,6 @@ export async function getServerSideProps(
     res = await getAirportDetail(Number(id));
   }
   return {
-    props: { airport: res || null },
+    props: { airportFromServerProps: res || null },
   };
 }

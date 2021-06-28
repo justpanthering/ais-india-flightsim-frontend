@@ -34,3 +34,14 @@ export async function getAirportDetail(airportId: number): Promise<Airport> {
   );
   return res.data.airport;
 }
+
+export async function updateAirportDetail(
+  airportId: number,
+  airport: Airport
+): Promise<Airport> {
+  const res = await apiRouteInstance.client.put<{ airport: Airport }>(
+    createPath(apiAirportDetailPath, { airportId }),
+    airport
+  );
+  return res.data.airport;
+}

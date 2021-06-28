@@ -40,30 +40,34 @@ export default function Coordinates({
   id,
 }: Props): JSX.Element {
   const { latitude, longitude } = value || {};
+  console.log(
+    "coordinate values: ",
+    latitude?.measurement,
+    longitude?.measurement
+  );
   return (
     <HStack id={id} width="100%">
       <InputGroup size="md">
-        <NumberInput step={0.5}>
-          <NumberInputField
-            w="300px"
-            placeholder="Latitude"
-            value={latitude?.measurement}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (onChange) {
-                onChange({
-                  latitude: {
-                    hemisphere: latitude?.hemisphere || "N",
-                    measurement: Number(val),
-                  },
-                  longitude: {
-                    hemisphere: longitude?.hemisphere || "E",
-                    measurement: Number(longitude?.measurement || 0),
-                  },
-                });
-              }
-            }}
-          />
+        <NumberInput
+          placeholder="Latitude"
+          value={latitude?.measurement}
+          onChange={(val) => {
+            if (onChange) {
+              onChange({
+                latitude: {
+                  hemisphere: latitude?.hemisphere || "N",
+                  measurement: Number(val),
+                },
+                longitude: {
+                  hemisphere: longitude?.hemisphere || "E",
+                  measurement: Number(longitude?.measurement || 0),
+                },
+              });
+            }
+          }}
+          step={0.5}
+        >
+          <NumberInputField w="300px" />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />
@@ -95,27 +99,26 @@ export default function Coordinates({
         </Select>
       </InputGroup>
       <InputGroup size="md">
-        <NumberInput step={0.5}>
-          <NumberInputField
-            w="300px"
-            placeholder="Longitude"
-            value={longitude?.measurement}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (onChange) {
-                onChange({
-                  latitude: {
-                    hemisphere: latitude?.hemisphere || "N",
-                    measurement: Number(latitude?.measurement || 0),
-                  },
-                  longitude: {
-                    hemisphere: longitude?.hemisphere || "E",
-                    measurement: Number(val),
-                  },
-                });
-              }
-            }}
-          />
+        <NumberInput
+          placeholder="Longitude"
+          value={longitude?.measurement}
+          onChange={(val) => {
+            if (onChange) {
+              onChange({
+                latitude: {
+                  hemisphere: latitude?.hemisphere || "N",
+                  measurement: Number(latitude?.measurement || 0),
+                },
+                longitude: {
+                  hemisphere: longitude?.hemisphere || "E",
+                  measurement: Number(val),
+                },
+              });
+            }
+          }}
+          step={0.5}
+        >
+          <NumberInputField w="300px" />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />
