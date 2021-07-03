@@ -8,13 +8,12 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import { getAirportList } from "../api-client/airport";
+import AirportList from "../components/airport/airportList";
 import useAirports from "../hooks/useAirports";
 import styles from "../styles/Home.module.css";
 import { AirportListItem } from "../types";
-import { pathAirportDetails } from "../utils/routes";
 
 export default function Home({
   airports,
@@ -44,23 +43,7 @@ export default function Home({
               onChange={handleChangeQuery}
             />
           </InputGroup>
-          <SimpleGrid columns={3} columnGap={10} margin="1rem 3rem">
-            {airports &&
-              airports.map((airport) => (
-                <div key={`airport_${airport.icao}`}>
-                  <Link
-                    href={pathAirportDetails.replace(
-                      ":id",
-                      airport.id.toString()
-                    )}
-                  >
-                    <a>
-                      {airport.localeName}/{airport.icao}
-                    </a>
-                  </Link>
-                </div>
-              ))}
-          </SimpleGrid>
+          <AirportList airports={airports} />
         </Box>
       </main>
 
