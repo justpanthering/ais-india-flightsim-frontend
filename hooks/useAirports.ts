@@ -4,16 +4,25 @@ import { ChangeEvent, useEffect, useState, useRef, useCallback } from "react";
 import { getAirportList } from "../api-client/airport";
 import { AirportListItem } from "../types";
 
-export default function useAirports() {
-  const [airports, setAirports] = useState<AirportListItem[]>();
+export default function useAirports(): {
+  filteredAirports: AirportListItem[];
+  searchQuery?: string;
+  handleChangeQuery?: (val: ChangeEvent<HTMLInputElement>) => void;
+  isFetching?: boolean;
+} {
+  const [filteredAirports, setFilteredAirports] = useState<AirportListItem[]>(
+    []
+  );
   const [searchQuery, setSearchQuery] = useState<string>();
+  const [isFetching, setIsFetching] = useState<boolean>();
 
   const toast = useToast();
 
-  const handleSearchQuery = useCallback(async (val) => {
+  const handleSearchQuery = useCallback(async (val: string) => {
+    setIsFetching(true);
     try {
       const airports = await getAirportList(val);
-      setAirports(airports);
+      setFilteredAirports(airports);
     } catch (e) {
       console.error(e);
       toast({
@@ -22,6 +31,8 @@ export default function useAirports() {
         status: "error",
         isClosable: true,
       });
+    } finally {
+      setIsFetching(false);
     }
   }, []);
 
@@ -29,8 +40,12 @@ export default function useAirports() {
 
   useEffect(() => {
     if (searchQuery) {
-      console.log("query changed");
       handleSearchQueryDebounce.current(searchQuery);
+    } else {
+      if (filteredAirports.length) {
+        handleSearchQueryDebounce.current.cancel;
+        setFilteredAirports([]);
+      }
     }
   }, [searchQuery]);
 
@@ -39,7 +54,9 @@ export default function useAirports() {
   }
 
   return {
-    airports,
+    filteredAirports,
+    searchQuery,
     handleChangeQuery,
+    isFetching,
   };
 }

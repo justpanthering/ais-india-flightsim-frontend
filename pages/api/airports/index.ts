@@ -7,12 +7,37 @@ export default async (
 ): Promise<NextApiResponse<any>> => {
   return new Promise((resolve) => {
     if (req.method === "GET") {
-      const { filter } = req.query;
+      const { filter } = req.query as { filter: string };
       if (filter) {
-        res.status(501).json({
-          message: "Query flow not implemented",
-        });
-        return resolve(res);
+        prisma.airport
+          .findMany({
+            where: {
+              OR: [
+                {
+                  icao: {
+                    contains: filter,
+                  },
+                },
+                {
+                  localeName: {
+                    contains: filter,
+                  },
+                },
+              ],
+            },
+          })
+          .then((airports) => {
+            console.log("returning");
+            res.status(200).json({
+              airports,
+            });
+            return resolve(res);
+          })
+          .catch((e) => {
+            console.error(e);
+            res.status(500).json({ message: e.message });
+            return resolve(res);
+          });
       } else {
         prisma.airport
           .findMany({
@@ -29,6 +54,11 @@ export default async (
             res.status(200).json({
               airports,
             });
+            return resolve(res);
+          })
+          .catch((e) => {
+            console.error(e);
+            res.status(500).json({ message: e.message });
             return resolve(res);
           });
       }

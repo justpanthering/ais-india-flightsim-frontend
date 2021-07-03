@@ -35,7 +35,6 @@ export default function Login(): JSX.Element {
   }
 
   useEffect(() => {
-    console.log(router.query);
     if (router.query.error === "CredentialsSignin") {
       setError("Invalid username or password.");
     }

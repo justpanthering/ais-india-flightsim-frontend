@@ -30,7 +30,7 @@ import { Airport, Runway } from "../../../types";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { pathAdmin, pathAirportDetails } from "../../../utils/routes";
-import { GetStaticPropsResult } from "next";
+import { GetServerSidePropsResult } from "next";
 
 interface Props {
   airportFromServerProps: Airport | null;
@@ -153,7 +153,6 @@ export default function ({
         <Formik
           initialValues={airportFromServerProps || initialValues}
           onSubmit={async (values) => {
-            console.log(values);
             const parsedValues: Omit<Airport, "id" | "runways"> & {
               id?: number;
               runways: (Omit<Runway, "id" | "airportId"> & {
@@ -193,14 +192,12 @@ export default function ({
                   Number(freq)
                 ),
             };
-            console.log(parsedValues);
             if (airportFromServerProps && airportFromServerProps.id) {
               try {
                 const res = await updateAirportDetail(
                   airportFromServerProps.id,
                   parsedValues
                 );
-                console.log("response: ", res);
                 toast({
                   title: `Success!`,
                   description: "Airport updated successfully",
@@ -223,7 +220,6 @@ export default function ({
             } else {
               try {
                 const res = await createAirport(parsedValues);
-                console.log("response: ", res);
                 toast({
                   title: `Success!`,
                   description: "Airport created successfully",
@@ -988,7 +984,7 @@ export default function ({
 
 export async function getServerSideProps(
   context: any
-): Promise<GetStaticPropsResult<Props>> {
+): Promise<GetServerSidePropsResult<Props>> {
   const { id } = context.params;
   let res: Airport | undefined;
   if (id !== "create") {

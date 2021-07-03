@@ -79,7 +79,6 @@ export function getAirportDetailsForDatabase(
 export function getRunwayDetailsForDatabase(
   runway: Runway
 ): Omit<RunwayDatabase, "id" | "airportId"> {
-  console.log(runway.visualSlopeIndicationSystem);
   return {
     name: runway.name,
     dimension: runway.dimension,

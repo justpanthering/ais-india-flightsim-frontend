@@ -1,11 +1,13 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import {
   Box,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
-  SimpleGrid,
+  Spinner,
 } from "@chakra-ui/react";
+import { GetStaticPathsResult, GetStaticPropsResult } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import React from "react";
@@ -20,7 +22,8 @@ export default function Home({
 }: {
   airports: AirportListItem[];
 }): JSX.Element {
-  const { handleChangeQuery } = useAirports();
+  const { filteredAirports, searchQuery, handleChangeQuery, isFetching } =
+    useAirports();
   return (
     <div className={styles.container}>
       <Head>
@@ -33,17 +36,24 @@ export default function Home({
       </Head>
 
       <main>
-        <Box p="1rem 2rem" maxH="100vh">
+        <Box p="1rem 2rem" maxH="100vh" w="100%">
           <InputGroup>
             <InputRightElement pointerEvents="none">
-              <SearchIcon fontSize="lg" color="gray.300" />
+              {isFetching ? (
+                <Spinner />
+              ) : (
+                <SearchIcon fontSize="lg" color="gray.300" />
+              )}
             </InputRightElement>
             <Input
               placeholder="Enter Airport Name/ICAO Code"
               onChange={handleChangeQuery}
             />
           </InputGroup>
-          <AirportList airports={airports} />
+          <HStack justifyContent="center" w="100%" marginTop="1rem">
+            {isFetching && <Spinner />}
+          </HStack>
+          <AirportList airports={searchQuery ? filteredAirports : airports} />
         </Box>
       </main>
 
@@ -63,11 +73,9 @@ export default function Home({
   );
 }
 
-export async function getStaticProps(): Promise<{
-  props: {
-    airports: AirportListItem[];
-  };
-}> {
+export async function getStaticProps(): Promise<
+  GetStaticPropsResult<{ airports: AirportListItem[] }>
+> {
   let airports: AirportListItem[] = [];
   try {
     airports = await getAirportList();
@@ -76,5 +84,6 @@ export async function getStaticProps(): Promise<{
   }
   return {
     props: { airports },
+    revalidate: 24 * 60 * 60,
   };
 }

@@ -40,11 +40,6 @@ export default function Coordinates({
   id,
 }: Props): JSX.Element {
   const { latitude, longitude } = value || {};
-  console.log(
-    "coordinate values: ",
-    latitude?.measurement,
-    longitude?.measurement
-  );
   return (
     <HStack id={id} width="100%">
       <InputGroup size="md">

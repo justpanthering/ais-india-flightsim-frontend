@@ -108,5 +108,6 @@ export async function getServerSideProps(): Promise<
   }
   return {
     props: { airportsFromServer: res || null },
+    revalidate: 24 * 60 * 60,
   };
 }

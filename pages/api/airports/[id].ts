@@ -33,7 +33,6 @@ export default async (
             });
             return resolve(res);
           }
-          console.log("found airport: ", airport);
           res.status(200).json({
             airport: getAirportDetailsForClient(airport),
           });

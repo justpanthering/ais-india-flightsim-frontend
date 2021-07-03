@@ -11,8 +11,6 @@ import { createPath } from "./utils";
 export function createAirport(
   airport: Omit<Airport, "id">
 ): Promise<AxiosResponse<Airport>> {
-  console.log("sending request: ", createPath(apiAirportsCreatePath));
-  console.log("api base url: ", process.env.API_BASE_URL);
   const res = apiRouteInstance.client.post<Airport>(
     createPath(apiAirportsCreatePath),
     airport

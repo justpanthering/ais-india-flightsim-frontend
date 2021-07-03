@@ -15,7 +15,6 @@ export default NextAuth({
             credentials
           );
           const user = res.data;
-          console.log(res.status, res.data, user);
 
           // If no error and we have user data, return it
           if (res.status === 200 && user) {
