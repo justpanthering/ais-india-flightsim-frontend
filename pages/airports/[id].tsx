@@ -2,9 +2,24 @@ import React, { useEffect, useState } from "react";
 import { GetStaticPathsResult, GetStaticPropsResult } from "next";
 import { getAirportDetail, getAirportList } from "../../api-client/airport";
 import { Airport, AirportListItem } from "../../types";
-import { VStack, Box, Table, Thead, Tr, Th, Tbody, Td } from "@chakra-ui/react";
+import {
+  VStack,
+  Box,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  Button,
+  Tag,
+  HStack,
+} from "@chakra-ui/react";
 import Description from "../../components/Description";
 import GroupWithHeader from "../../components/GroupWithHeader";
+import { useSession } from "next-auth/client";
+import { useRouter } from "next/router";
+import { pathAdminAirportDetails } from "../../utils/routes";
 
 interface Props {
   airportFromServerProps: Airport | null;
@@ -14,11 +29,16 @@ export default function AirportDetail({
   airportFromServerProps,
 }: Props): JSX.Element {
   const [airport, setAirport] = useState<Airport>();
+  const [session, isLoading] = useSession();
+  const router = useRouter();
   useEffect(() => {
     if (airportFromServerProps && !airport) {
       setAirport(airportFromServerProps);
     }
   }, []);
+  if (isLoading) {
+    return <>Loading...</>;
+  }
   if (!airport) {
     return <>Airport not found</>;
   }
@@ -41,22 +61,14 @@ export default function AirportDetail({
             title="Coordinates"
             description={
               <VStack>
-                <Description
-                  title="Latitude"
-                  description={`${airport.coordinates.latitude.measurement} ${airport.coordinates.latitude.hemisphere}`}
-                  verify={
-                    !!airport.coordinates.latitude.measurement &&
-                    !!airport.coordinates.latitude.hemisphere
-                  }
-                />
-                <Description
-                  title="Longitude"
-                  description={`${airport.coordinates.longitude.measurement} ${airport.coordinates.longitude.hemisphere}`}
-                  verify={
-                    !!airport.coordinates.longitude.measurement &&
-                    !!airport.coordinates.longitude.hemisphere
-                  }
-                />
+                <span>
+                  {airport.coordinates.latitude.measurement}{" "}
+                  {airport.coordinates.latitude.hemisphere}
+                </span>
+                <span>
+                  {airport.coordinates.longitude.measurement}{" "}
+                  {airport.coordinates.longitude.hemisphere}
+                </span>
               </VStack>
             }
           />
@@ -116,72 +128,76 @@ export default function AirportDetail({
         </Table>
       </GroupWithHeader>
       <GroupWithHeader title="Communication">
-        <Description
-          title="Information"
-          description={
-            <VStack>
-              {airport.informationTrafficCommunicationFrequency.map((freq) => (
-                <span key={`information_freq_${freq}`}>{freq}</span>
-              ))}
-            </VStack>
-          }
-          verify={airport.informationTrafficCommunicationFrequency.length > 0}
-        />
-        <Description
-          title="Tower"
-          description={
-            <VStack>
-              {airport.towerTrafficCommunicationFrequency.map((freq) => (
-                <span key={`tower_freq_${freq}`}>{freq}</span>
-              ))}
-            </VStack>
-          }
-          verify={airport.towerTrafficCommunicationFrequency.length > 0}
-        />
-        <Description
-          title="Radar"
-          description={
-            <VStack>
-              {airport.radarTrafficCommunicationFrequency.map((freq) => (
-                <span key={`radar_freq_${freq}`}>{freq}</span>
-              ))}
-            </VStack>
-          }
-          verify={airport.radarTrafficCommunicationFrequency.length > 0}
-        />
-        <Description
-          title="Control"
-          description={
-            <VStack>
-              {airport.controlTrafficCommunicationFrequency.map((freq) => (
-                <span key={`control_freq_${freq}`}>{freq}</span>
-              ))}
-            </VStack>
-          }
-          verify={airport.controlTrafficCommunicationFrequency.length > 0}
-        />
-        <Description
-          title="Approach"
-          description={
-            <VStack>
-              {airport.approachTrafficCommunicationFrequency.map((freq) => (
-                <span key={`approach_freq_${freq}`}>{freq}</span>
-              ))}
-            </VStack>
-          }
-          verify={airport.approachTrafficCommunicationFrequency.length > 0}
-        />
-        <Description
-          title="Ground"
-          description={
-            <VStack>
-              {airport.groundTrafficCommunicationFrequency.map((freq) => (
-                <span key={`ground_freq_${freq}`}>{freq}</span>
-              ))}
-            </VStack>
-          }
-          verify={airport.groundTrafficCommunicationFrequency.length > 0}
-        />
+        <VStack>
+          <Description
+            title="Information"
+            description={
+              <VStack>
+                {airport.informationTrafficCommunicationFrequency.map(
+                  (freq) => (
+                    <Tag key={`information_freq_${freq}`}>{freq}</Tag>
+                  )
+                )}
+              </VStack>
+            }
+            verify={airport.informationTrafficCommunicationFrequency.length > 0}
+          />
+          <Description
+            title="Tower"
+            description={
+              <HStack>
+                {airport.towerTrafficCommunicationFrequency.map((freq) => (
+                  <Tag key={`tower_freq_${freq}`}>{freq}</Tag>
+                ))}
+              </HStack>
+            }
+            verify={airport.towerTrafficCommunicationFrequency.length > 0}
+          />
+          <Description
+            title="Radar"
+            description={
+              <VStack>
+                {airport.radarTrafficCommunicationFrequency.map((freq) => (
+                  <Tag key={`radar_freq_${freq}`}>{freq}</Tag>
+                ))}
+              </VStack>
+            }
+            verify={airport.radarTrafficCommunicationFrequency.length > 0}
+          />
+          <Description
+            title="Control"
+            description={
+              <VStack>
+                {airport.controlTrafficCommunicationFrequency.map((freq) => (
+                  <Tag key={`control_freq_${freq}`}>{freq}</Tag>
+                ))}
+              </VStack>
+            }
+            verify={airport.controlTrafficCommunicationFrequency.length > 0}
+          />
+          <Description
+            title="Approach"
+            description={
+              <VStack>
+                {airport.approachTrafficCommunicationFrequency.map((freq) => (
+                  <Tag key={`approach_freq_${freq}`}>{freq}</Tag>
+                ))}
+              </VStack>
+            }
+            verify={airport.approachTrafficCommunicationFrequency.length > 0}
+          />
+          <Description
+            title="Ground"
+            description={
+              <VStack>
+                {airport.groundTrafficCommunicationFrequency.map((freq) => (
+                  <Tag key={`ground_freq_${freq}`}>{freq}</Tag>
+                ))}
+              </VStack>
+            }
+            verify={airport.groundTrafficCommunicationFrequency.length > 0}
+          />
+        </VStack>
       </GroupWithHeader>
       {!!airport.charts.length && (
         <GroupWithHeader title="Charts">
@@ -189,10 +205,25 @@ export default function AirportDetail({
             <Description
               key={`chart_${chart.url}`}
               title={chart.name}
-              description={<a href={chart.url}>chart.url</a>}
+              description={
+                <a target="_blank" rel="noreferrer" href={chart.url}>
+                  {chart.url}
+                </a>
+              }
             />
           ))}
         </GroupWithHeader>
+      )}
+      {session && (
+        <Button
+          onClick={() =>
+            router.push(
+              pathAdminAirportDetails.replace(":id", airport.id.toString())
+            )
+          }
+        >
+          Edit
+        </Button>
       )}
     </Box>
   );

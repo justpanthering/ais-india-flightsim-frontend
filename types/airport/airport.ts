@@ -1,4 +1,5 @@
 export interface Runway {
+  id?: number;
   name: string;
   dimension: number;
   surface: string;
@@ -35,6 +36,7 @@ export interface Airport {
   address: string;
   runways: Runway[];
   charts: {
+    id?: number;
     name: string;
     url: string;
   }[];

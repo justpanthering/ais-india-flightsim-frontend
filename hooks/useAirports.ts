@@ -2,10 +2,10 @@ import { useToast } from "@chakra-ui/react";
 import { debounce } from "lodash";
 import { ChangeEvent, useEffect, useState, useRef, useCallback } from "react";
 import { getAirportList } from "../api-client/airport";
-import { Airport } from "../types";
+import { AirportListItem } from "../types";
 
 export default function useAirports() {
-  const [airports, setAirports] = useState<Airport[]>();
+  const [airports, setAirports] = useState<AirportListItem[]>();
   const [searchQuery, setSearchQuery] = useState<string>();
 
   const toast = useToast();

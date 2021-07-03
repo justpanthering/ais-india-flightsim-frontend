@@ -2,14 +2,14 @@ import { Airport, Runway } from "../../../types";
 import {
   Airport as AirportDatabase,
   Runway as RunwayDatabase,
-  Chart,
+  Chart as ChartDatabase,
   User,
 } from "@prisma/client";
 
 export function getAirportDetailsForClient(
   airport: AirportDatabase & {
     runways: RunwayDatabase[];
-    charts: Chart[];
+    charts: ChartDatabase[];
   }
 ): Airport {
   return {
@@ -79,6 +79,7 @@ export function getAirportDetailsForDatabase(
 export function getRunwayDetailsForDatabase(
   runway: Runway
 ): Omit<RunwayDatabase, "id" | "airportId"> {
+  console.log(runway.visualSlopeIndicationSystem);
   return {
     name: runway.name,
     dimension: runway.dimension,
@@ -91,3 +92,13 @@ export function getRunwayDetailsForDatabase(
     visualSlopeIndicationSystem: runway.visualSlopeIndicationSystem,
   };
 }
+
+// export function getChartDetailsForDatabase(chart: {
+//   name: string;
+//   url: string;
+// }): Omit<ChartDatabase, "id" | "airportId"> {
+//   return {
+//     name: chart.name,
+
+//   };
+// }

@@ -49,9 +49,9 @@ model Airport {
 }
 
 model Runway {
-  id                          Int     @id @default(autoincrement())
-  airport                     Airport @relation(fields: [airportId], references: [id])
-  airportId                   Int
+  id                          Int      @id @default(autoincrement())
+  airport                     Airport? @relation(fields: [airportId], references: [id])
+  airportId                   Int?
   name                        String
   dimension                   Float
   surface                     String
@@ -64,9 +64,9 @@ model Runway {
 }
 
 model Chart {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
   url       String
-  airport   Airport @relation(fields: [airportId], references: [id])
-  airportId Int
+  airport   Airport? @relation(fields: [airportId], references: [id])
+  airportId Int?
 }

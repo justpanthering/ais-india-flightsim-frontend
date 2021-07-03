@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { FieldArray, FieldInputProps, Form, Formik } from "formik";
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import * as Yup from "yup";
 import GroupWithHeader from "../../../components/GroupWithHeader";
 import CoordinatesInput from "../../../components/customInputs/coordinates";
@@ -26,10 +26,10 @@ import {
   getAirportDetail,
   updateAirportDetail,
 } from "../../../api-client/airport";
-import { Airport } from "../../../types";
+import { Airport, Runway } from "../../../types";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
-import { pathAdmin } from "../../../utils/routes";
+import { pathAdmin, pathAirportDetails } from "../../../utils/routes";
 import { GetStaticPropsResult } from "next";
 
 interface Props {
@@ -39,13 +39,6 @@ interface Props {
 export default function ({
   airportFromServerProps,
 }: Props): JSX.Element | null {
-  const [airport, setAirport] = useState<Airport>();
-  useEffect(() => {
-    if (airportFromServerProps) {
-      setAirport(airportFromServerProps);
-    }
-  }, [airportFromServerProps]);
-
   const [session, loading] = useSession();
   const toast = useToast();
   const router = useRouter();
@@ -158,10 +151,16 @@ export default function ({
       </Head>
       <Box p="1rem 2rem" maxW="1080px">
         <Formik
-          initialValues={airport || initialValues}
+          initialValues={airportFromServerProps || initialValues}
           onSubmit={async (values) => {
-            // console.log(values);
-            const parsedValues: Omit<Airport, "id"> = {
+            console.log(values);
+            const parsedValues: Omit<Airport, "id" | "runways"> & {
+              id?: number;
+              runways: (Omit<Runway, "id" | "airportId"> & {
+                id?: number;
+                airportId?: number;
+              })[];
+            } = {
               ...values,
               elevation: Number(values.elevation),
               runways: values.runways.map((runway) => ({
@@ -195,17 +194,23 @@ export default function ({
                 ),
             };
             console.log(parsedValues);
-            if (airport && airport.id) {
+            if (airportFromServerProps && airportFromServerProps.id) {
               try {
-                const res = await updateAirportDetail(airport.id, parsedValues);
+                const res = await updateAirportDetail(
+                  airportFromServerProps.id,
+                  parsedValues
+                );
                 console.log("response: ", res);
                 toast({
                   title: `Success!`,
-                  description: "Airport created successfully",
+                  description: "Airport updated successfully",
                   status: "success",
                   isClosable: true,
                 });
-                setAirport(res);
+                // setAirport(res);
+                router.push(
+                  pathAirportDetails.replace(":id", res.id.toString())
+                );
               } catch (e) {
                 console.error(e);
                 toast({
