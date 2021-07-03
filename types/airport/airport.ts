@@ -17,7 +17,7 @@ export interface Runway {
 }
 
 export interface Airport {
-  id?: number;
+  id: number;
   icao: string;
   localeName: string;
   aerodomeName: string;
@@ -45,3 +45,5 @@ export interface Airport {
   groundTrafficCommunicationFrequency: number[];
   informationTrafficCommunicationFrequency: number[];
 }
+
+export type AirportListItem = Pick<Airport, "id" | "localeName" | "icao">;

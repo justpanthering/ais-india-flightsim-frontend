@@ -12,8 +12,8 @@ export default function useAirports() {
 
   const handleSearchQuery = useCallback(async (val) => {
     try {
-      const res = await getAirportList(val);
-      setAirports(res.data);
+      const airports = await getAirportList(val);
+      setAirports(airports);
     } catch (e) {
       console.error(e);
       toast({
@@ -28,8 +28,10 @@ export default function useAirports() {
   const handleSearchQueryDebounce = useRef(debounce(handleSearchQuery, 500));
 
   useEffect(() => {
-    console.log("query changed");
-    handleSearchQueryDebounce.current(searchQuery);
+    if (searchQuery) {
+      console.log("query changed");
+      handleSearchQueryDebounce.current(searchQuery);
+    }
   }, [searchQuery]);
 
   function handleChangeQuery(e: ChangeEvent<HTMLInputElement>) {

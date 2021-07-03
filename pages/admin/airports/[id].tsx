@@ -57,7 +57,7 @@ export default function ({
     router.push("/");
   }
 
-  const initialValues: Airport = {
+  const initialValues: Omit<Airport, "id"> = {
     icao: "",
     localeName: "",
     aerodomeName: "",
@@ -161,7 +161,7 @@ export default function ({
           initialValues={airport || initialValues}
           onSubmit={async (values) => {
             // console.log(values);
-            const parsedValues: Airport = {
+            const parsedValues: Omit<Airport, "id"> = {
               ...values,
               elevation: Number(values.elevation),
               runways: values.runways.map((runway) => ({
