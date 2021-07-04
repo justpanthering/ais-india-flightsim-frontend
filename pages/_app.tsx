@@ -7,6 +7,7 @@ import { Provider } from "next-auth/client";
 import NProgress from "nprogress";
 import router from "next/router";
 import "nprogress/nprogress.css";
+import { myTheme } from "../styles/theme";
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   useEffect(() => {
@@ -28,7 +29,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 
   return (
     <Provider session={pageProps.session}>
-      <ChakraProvider>
+      <ChakraProvider theme={myTheme}>
         <Layout>
           <Component {...pageProps} />
         </Layout>

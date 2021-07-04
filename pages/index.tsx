@@ -6,15 +6,17 @@ import {
   InputGroup,
   InputRightElement,
   Spinner,
+  VStack,
 } from "@chakra-ui/react";
 import { GetStaticPropsResult } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { getAirportList } from "../api-client/airport";
 import AirportList from "../components/airport/airportList";
 import useAirports from "../hooks/useAirports";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Home.module.scss";
 import { AirportListItem } from "../types";
 
 export default function Home({
@@ -25,7 +27,7 @@ export default function Home({
   const { filteredAirports, searchQuery, handleChangeQuery, isFetching } =
     useAirports();
   return (
-    <div className={styles.container}>
+    <div className={styles.Container}>
       <Head>
         <title>AIS - India</title>
         <meta
@@ -36,38 +38,42 @@ export default function Home({
       </Head>
 
       <main>
-        <Box p="1rem 2rem" w="100%">
-          <InputGroup>
-            <InputRightElement pointerEvents="none">
-              {isFetching ? (
-                <Spinner />
-              ) : (
-                <SearchIcon fontSize="lg" color="gray.300" />
-              )}
-            </InputRightElement>
-            <Input
-              placeholder="Enter Airport Name/ICAO Code"
-              onChange={handleChangeQuery}
-            />
-          </InputGroup>
-          <HStack justifyContent="center" w="100%" marginTop="1rem">
-            {isFetching && <Spinner />}
-          </HStack>
-          <AirportList airports={searchQuery ? filteredAirports : airports} />
+        <Box
+          p="0 2rem"
+          w="100%"
+          minH="calc(100vh - 3rem)"
+          backgroundImage="url(../assets/images/background.jpg)"
+        >
+          <Box paddingTop="6rem">
+            <InputGroup>
+              <InputRightElement pointerEvents="none">
+                {isFetching ? (
+                  <Spinner />
+                ) : (
+                  <SearchIcon fontSize="lg" color="gray.300" />
+                )}
+              </InputRightElement>
+              <Input
+                placeholder="Enter Airport Name/ICAO Code"
+                onChange={handleChangeQuery}
+              />
+            </InputGroup>
+            <HStack justifyContent="center" w="100%" marginTop="1rem">
+              {isFetching && <Spinner />}
+            </HStack>
+            <AirportList airports={searchQuery ? filteredAirports : airports} />
+          </Box>
         </Box>
       </main>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+      <footer>
+        <VStack bg="primary" opacity="0.7" p="1rem 2rem" height="3rem">
+          <span>
+            <Link href="https://justpanthering.github.io/portfolio/">
+              <a>Developed By: Ankit Lakra</a>
+            </Link>
           </span>
-        </a>
+        </VStack>
       </footer>
     </div>
   );

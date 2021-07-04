@@ -21,38 +21,45 @@ export default function Layout({
   const router = useRouter();
   return (
     <>
-      <Box
-        bg="tomato"
+      <HStack
+        bg="primary"
+        // opacity="0.7"
         p="1rem 2rem"
         color="white"
         w="100%"
         position="fixed"
         height="4rem"
+        zIndex={10}
       >
-        <Flex alignItems="center">
-          Aeronautical Information System - India
-          <HStack marginLeft="2rem">
-            {router.pathname !== routes.home && (
-              <Link href={routes.home}>
-                <a>Home</a>
-              </Link>
+        <Box>
+          <Link href={routes.home}>
+            <a>Aeronautical Information System - India</a>
+          </Link>
+        </Box>
+        <Spacer />
+        {(loading || !session) && router.pathname !== routes.login && (
+          <Button variant="outline" onClick={() => signIn()}>
+            Login
+          </Button>
+        )}
+        {session && (
+          <HStack>
+            {router.pathname !== routes.admin.dashboard && (
+              <Link href={routes.admin.dashboard}>Dashboard</Link>
             )}
+            <Button variant="outline" onClick={() => signOut()}>
+              Logout
+            </Button>
           </HStack>
-          <Spacer />
-          {(loading || !session) && router.pathname !== routes.login && (
-            <Button onClick={() => signIn()}>Login</Button>
-          )}
-          {session && (
-            <HStack>
-              {router.pathname !== routes.admin.dashboard && (
-                <Link href={routes.admin.dashboard}>Dashboard</Link>
-              )}
-              <Button onClick={() => signOut()}>Logout</Button>
-            </HStack>
-          )}
-        </Flex>
+        )}
+      </HStack>
+      <Box
+        bg={router.pathname === routes.home ? "none" : "primaryBg"}
+        minH="100vh"
+        paddingTop={router.pathname === routes.home ? "0" : "6rem"}
+      >
+        {children}
       </Box>
-      <div style={{ paddingTop: "4rem" }}>{children}</div>
     </>
   );
 }

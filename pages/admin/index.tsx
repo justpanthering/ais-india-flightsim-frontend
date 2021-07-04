@@ -47,7 +47,7 @@ export default function Admin({ airports }: Props): JSX.Element | null {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Box p="1rem 2rem" w="100%">
+        <Box p="0 2rem" w="100%">
           <VStack alignItems="start">
             <Button
               marginLeft="auto"
