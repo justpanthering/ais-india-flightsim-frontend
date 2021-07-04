@@ -32,9 +32,11 @@ export default function Layout({
         <Flex alignItems="center">
           Aeronautical Information System - India
           <HStack marginLeft="2rem">
-            <Link href={routes.home}>
-              <a>Home</a>
-            </Link>
+            {router.pathname !== routes.home && (
+              <Link href={routes.home}>
+                <a>Home</a>
+              </Link>
+            )}
           </HStack>
           <Spacer />
           {(loading || !session) && router.pathname !== routes.login && (
@@ -42,7 +44,9 @@ export default function Layout({
           )}
           {session && (
             <HStack>
-              <Link href={routes.admin.dashboard}>Dashboard</Link>
+              {router.pathname !== routes.admin.dashboard && (
+                <Link href={routes.admin.dashboard}>Dashboard</Link>
+              )}
               <Button onClick={() => signOut()}>Logout</Button>
             </HStack>
           )}

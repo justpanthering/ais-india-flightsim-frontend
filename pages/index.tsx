@@ -7,7 +7,7 @@ import {
   InputRightElement,
   Spinner,
 } from "@chakra-ui/react";
-import { GetStaticPathsResult, GetStaticPropsResult } from "next";
+import { GetStaticPropsResult } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import React from "react";
@@ -36,7 +36,7 @@ export default function Home({
       </Head>
 
       <main>
-        <Box p="1rem 2rem" maxH="100vh" w="100%">
+        <Box p="1rem 2rem" w="100%">
           <InputGroup>
             <InputRightElement pointerEvents="none">
               {isFetching ? (

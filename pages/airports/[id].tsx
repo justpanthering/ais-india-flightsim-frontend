@@ -137,13 +137,13 @@ export default function AirportDetail({
           <Description
             title="Information"
             description={
-              <VStack>
+              <HStack>
                 {airport.informationTrafficCommunicationFrequency.map(
                   (freq) => (
                     <Tag key={`information_freq_${freq}`}>{freq}</Tag>
                   )
                 )}
-              </VStack>
+              </HStack>
             }
             verify={airport.informationTrafficCommunicationFrequency.length > 0}
           />
@@ -161,44 +161,44 @@ export default function AirportDetail({
           <Description
             title="Radar"
             description={
-              <VStack>
+              <HStack>
                 {airport.radarTrafficCommunicationFrequency.map((freq) => (
                   <Tag key={`radar_freq_${freq}`}>{freq}</Tag>
                 ))}
-              </VStack>
+              </HStack>
             }
             verify={airport.radarTrafficCommunicationFrequency.length > 0}
           />
           <Description
             title="Control"
             description={
-              <VStack>
+              <HStack>
                 {airport.controlTrafficCommunicationFrequency.map((freq) => (
                   <Tag key={`control_freq_${freq}`}>{freq}</Tag>
                 ))}
-              </VStack>
+              </HStack>
             }
             verify={airport.controlTrafficCommunicationFrequency.length > 0}
           />
           <Description
             title="Approach"
             description={
-              <VStack>
+              <HStack>
                 {airport.approachTrafficCommunicationFrequency.map((freq) => (
                   <Tag key={`approach_freq_${freq}`}>{freq}</Tag>
                 ))}
-              </VStack>
+              </HStack>
             }
             verify={airport.approachTrafficCommunicationFrequency.length > 0}
           />
           <Description
             title="Ground"
             description={
-              <VStack>
+              <HStack>
                 {airport.groundTrafficCommunicationFrequency.map((freq) => (
                   <Tag key={`ground_freq_${freq}`}>{freq}</Tag>
                 ))}
-              </VStack>
+              </HStack>
             }
             verify={airport.groundTrafficCommunicationFrequency.length > 0}
           />

@@ -1,4 +1,4 @@
-import { SimpleGrid } from "@chakra-ui/layout";
+import { Box, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
 import { AirportListItem } from "../../types";
@@ -10,10 +10,10 @@ interface Props {
 
 export default function AirportList({ airports }: Props): JSX.Element {
   return (
-    <SimpleGrid columns={3} columnGap={10} margin="1rem 3rem">
+    <VStack align="flex-start" margin="1rem 3rem">
       {airports &&
         airports.map((airport) => (
-          <div key={`airport_${airport.icao}`}>
+          <Box key={`airport_${airport.icao}`}>
             <Link
               href={pathAirportDetails.replace(":id", airport.id.toString())}
             >
@@ -21,8 +21,8 @@ export default function AirportList({ airports }: Props): JSX.Element {
                 {airport.localeName}/{airport.icao}
               </a>
             </Link>
-          </div>
+          </Box>
         ))}
-    </SimpleGrid>
+    </VStack>
   );
 }
