@@ -260,6 +260,6 @@ export async function getStaticProps(context: {
   }
   return {
     props: { airportFromServerProps: res || null },
-    revalidate: 24 * 60 * 60,
+    revalidate: 10,
   };
 }
