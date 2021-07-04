@@ -90,6 +90,6 @@ export async function getStaticProps(): Promise<
   }
   return {
     props: { airports },
-    revalidate: 24 * 60 * 60,
+    revalidate: 10,
   };
 }
