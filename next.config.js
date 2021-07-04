@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-undef */
+const path = require('path');
 module.exports = {
   env: {
     API_BASE_URL: process.env.API_BASE_URL,
