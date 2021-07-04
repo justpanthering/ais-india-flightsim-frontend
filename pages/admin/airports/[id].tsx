@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { FieldArray, FieldInputProps, Form, Formik } from "formik";
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import * as Yup from "yup";
 import GroupWithHeader from "../../../components/GroupWithHeader";
 import CoordinatesInput from "../../../components/customInputs/coordinates";
@@ -26,11 +26,11 @@ import {
   getAirportDetail,
   updateAirportDetail,
 } from "../../../api-client/airport";
-import { Airport } from "../../../types";
+import { Airport, Runway } from "../../../types";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
-import { pathAdmin } from "../../../utils/routes";
-import { GetStaticPropsResult } from "next";
+import { pathAdmin, pathAirportDetails } from "../../../utils/routes";
+import { GetServerSidePropsResult } from "next";
 
 interface Props {
   airportFromServerProps: Airport | null;
@@ -39,13 +39,6 @@ interface Props {
 export default function ({
   airportFromServerProps,
 }: Props): JSX.Element | null {
-  const [airport, setAirport] = useState<Airport>();
-  useEffect(() => {
-    if (airportFromServerProps) {
-      setAirport(airportFromServerProps);
-    }
-  }, [airportFromServerProps]);
-
   const [session, loading] = useSession();
   const toast = useToast();
   const router = useRouter();
@@ -57,7 +50,7 @@ export default function ({
     router.push("/");
   }
 
-  const initialValues: Airport = {
+  const initialValues: Omit<Airport, "id"> = {
     icao: "",
     localeName: "",
     aerodomeName: "",
@@ -158,16 +151,22 @@ export default function ({
       </Head>
       <Box p="1rem 2rem" maxW="1080px">
         <Formik
-          initialValues={airport || initialValues}
+          initialValues={airportFromServerProps || initialValues}
           onSubmit={async (values) => {
-            // console.log(values);
-            const parsedValues: Airport = {
+            const parsedValues: Omit<Airport, "id" | "runways"> & {
+              id?: number;
+              runways: (Omit<Runway, "id" | "airportId"> & {
+                id?: number;
+                airportId?: number;
+              })[];
+            } = {
               ...values,
               elevation: Number(values.elevation),
               runways: values.runways.map((runway) => ({
                 ...runway,
                 dimension: Number(runway.dimension),
                 elevation: Number(runway.elevation),
+                trueBearing: Number(runway.trueBearing),
               })),
               radarTrafficCommunicationFrequency:
                 values.radarTrafficCommunicationFrequency.map((freq) =>
@@ -194,18 +193,21 @@ export default function ({
                   Number(freq)
                 ),
             };
-            console.log(parsedValues);
-            if (airport && airport.id) {
+            if (airportFromServerProps && airportFromServerProps.id) {
               try {
-                const res = await updateAirportDetail(airport.id, parsedValues);
-                console.log("response: ", res);
+                const res = await updateAirportDetail(
+                  airportFromServerProps.id,
+                  parsedValues
+                );
                 toast({
                   title: `Success!`,
-                  description: "Airport created successfully",
+                  description: "Airport updated successfully",
                   status: "success",
                   isClosable: true,
                 });
-                setAirport(res);
+                router.push(
+                  pathAirportDetails.replace(":id", res.id.toString())
+                );
               } catch (e) {
                 console.error(e);
                 toast({
@@ -217,8 +219,7 @@ export default function ({
               }
             } else {
               try {
-                const res = await createAirport(parsedValues);
-                console.log("response: ", res);
+                await createAirport(parsedValues);
                 toast({
                   title: `Success!`,
                   description: "Airport created successfully",
@@ -451,6 +452,34 @@ export default function ({
                                 )}
                               />
                               <FormikField
+                                name={`runways[${i}].trueBearing`}
+                                label="True Bearing"
+                                helperText="True bearing of the runway in degrees"
+                                touched={touched}
+                                errors={errors}
+                                isRequired
+                                errorNameArr={[`runways[${i}].trueBearing`]}
+                                render={(props: FieldInputProps<any>) => (
+                                  <InputGroup size="sm">
+                                    <NumberInput
+                                      {...props}
+                                      id={`runways.${i}.trueBearing`}
+                                      onChange={(val) =>
+                                        setFieldValue(props.name, val)
+                                      }
+                                      step={0.5}
+                                    >
+                                      <NumberInputField />
+                                      <NumberInputStepper>
+                                        <NumberIncrementStepper />
+                                        <NumberDecrementStepper />
+                                      </NumberInputStepper>
+                                    </NumberInput>
+                                    <InputRightAddon>DEG</InputRightAddon>
+                                  </InputGroup>
+                                )}
+                              />
+                              <FormikField
                                 name={`runways[${i}].elevation`}
                                 label="Elevation"
                                 helperText="Runway elevation in feet"
@@ -634,7 +663,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -695,7 +724,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -757,7 +786,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -819,7 +848,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -880,7 +909,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -942,7 +971,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -983,7 +1012,7 @@ export default function ({
 
 export async function getServerSideProps(
   context: any
-): Promise<GetStaticPropsResult<Props>> {
+): Promise<GetServerSidePropsResult<Props>> {
   const { id } = context.params;
   let res: Airport | undefined;
   if (id !== "create") {

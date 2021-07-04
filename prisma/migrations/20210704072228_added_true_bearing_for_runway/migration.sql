@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Runway" ADD COLUMN     "trueBearing" DOUBLE PRECISION NOT NULL DEFAULT 0;

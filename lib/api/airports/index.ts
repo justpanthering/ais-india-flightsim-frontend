@@ -2,14 +2,14 @@ import { Airport, Runway } from "../../../types";
 import {
   Airport as AirportDatabase,
   Runway as RunwayDatabase,
-  Chart,
+  Chart as ChartDatabase,
   User,
 } from "@prisma/client";
 
 export function getAirportDetailsForClient(
   airport: AirportDatabase & {
     runways: RunwayDatabase[];
-    charts: Chart[];
+    charts: ChartDatabase[];
   }
 ): Airport {
   return {
@@ -68,11 +68,6 @@ export function getAirportDetailsForDatabase(
       airportData.radarTrafficCommunicationFrequency,
     towerTrafficCommunicationFrequency:
       airportData.towerTrafficCommunicationFrequency,
-    // charts: {
-    //   create: airportData.charts.map((chart) => ({
-    //     ...chart,
-    //   })),
-    // },
   };
 }
 
@@ -89,5 +84,6 @@ export function getRunwayDetailsForDatabase(
     longitudeMeasurement: runway.coordinates.longitude.measurement,
     longitudeHemisphere: runway.coordinates.longitude.hemisphere,
     visualSlopeIndicationSystem: runway.visualSlopeIndicationSystem,
+    trueBearing: runway.trueBearing,
   };
 }

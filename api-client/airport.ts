@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { Airport } from "../types";
+import { Airport, AirportListItem } from "../types";
 import { apiRouteInstance } from "./client";
 import {
   apiAirportDetailPath,
@@ -9,10 +9,8 @@ import {
 import { createPath } from "./utils";
 
 export function createAirport(
-  airport: Airport
+  airport: Omit<Airport, "id">
 ): Promise<AxiosResponse<Airport>> {
-  console.log("sending request: ", createPath(apiAirportsCreatePath));
-  console.log("api base url: ", process.env.API_BASE_URL);
   const res = apiRouteInstance.client.post<Airport>(
     createPath(apiAirportsCreatePath),
     airport
@@ -20,12 +18,15 @@ export function createAirport(
   return res;
 }
 
-export function getAirportList(
-  query: string
-): Promise<AxiosResponse<Airport[]>> {
-  return apiRouteInstance.client.get<Airport[]>(createPath(apiAirportsPath), {
+export async function getAirportList(
+  query?: string
+): Promise<AirportListItem[]> {
+  const res = await apiRouteInstance.client.get<{
+    airports: AirportListItem[];
+  }>(createPath(apiAirportsPath), {
     params: { filter: query },
   });
+  return res.data.airports;
 }
 
 export async function getAirportDetail(airportId: number): Promise<Airport> {
@@ -37,7 +38,7 @@ export async function getAirportDetail(airportId: number): Promise<Airport> {
 
 export async function updateAirportDetail(
   airportId: number,
-  airport: Airport
+  airport: Omit<Airport, "id">
 ): Promise<Airport> {
   const res = await apiRouteInstance.client.put<{ airport: Airport }>(
     createPath(apiAirportDetailPath, { airportId }),

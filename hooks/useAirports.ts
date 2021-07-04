@@ -2,18 +2,27 @@ import { useToast } from "@chakra-ui/react";
 import { debounce } from "lodash";
 import { ChangeEvent, useEffect, useState, useRef, useCallback } from "react";
 import { getAirportList } from "../api-client/airport";
-import { Airport } from "../types";
+import { AirportListItem } from "../types";
 
-export default function useAirports() {
-  const [airports, setAirports] = useState<Airport[]>();
+export default function useAirports(): {
+  filteredAirports: AirportListItem[];
+  searchQuery?: string;
+  handleChangeQuery?: (val: ChangeEvent<HTMLInputElement>) => void;
+  isFetching?: boolean;
+} {
+  const [filteredAirports, setFilteredAirports] = useState<AirportListItem[]>(
+    []
+  );
   const [searchQuery, setSearchQuery] = useState<string>();
+  const [isFetching, setIsFetching] = useState<boolean>();
 
   const toast = useToast();
 
-  const handleSearchQuery = useCallback(async (val) => {
+  const handleSearchQuery = useCallback(async (val: string) => {
+    setIsFetching(true);
     try {
-      const res = await getAirportList(val);
-      setAirports(res.data);
+      const airports = await getAirportList(val);
+      setFilteredAirports(airports);
     } catch (e) {
       console.error(e);
       toast({
@@ -22,14 +31,22 @@ export default function useAirports() {
         status: "error",
         isClosable: true,
       });
+    } finally {
+      setIsFetching(false);
     }
   }, []);
 
   const handleSearchQueryDebounce = useRef(debounce(handleSearchQuery, 500));
 
   useEffect(() => {
-    console.log("query changed");
-    handleSearchQueryDebounce.current(searchQuery);
+    if (searchQuery) {
+      handleSearchQueryDebounce.current(searchQuery);
+    } else {
+      if (filteredAirports.length) {
+        handleSearchQueryDebounce.current.cancel;
+        setFilteredAirports([]);
+      }
+    }
   }, [searchQuery]);
 
   function handleChangeQuery(e: ChangeEvent<HTMLInputElement>) {
@@ -37,7 +54,9 @@ export default function useAirports() {
   }
 
   return {
-    airports,
+    filteredAirports,
+    searchQuery,
     handleChangeQuery,
+    isFetching,
   };
 }

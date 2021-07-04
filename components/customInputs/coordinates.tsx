@@ -8,6 +8,7 @@ import {
   NumberInputField,
   NumberInputStepper,
   Select,
+  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -40,13 +41,8 @@ export default function Coordinates({
   id,
 }: Props): JSX.Element {
   const { latitude, longitude } = value || {};
-  console.log(
-    "coordinate values: ",
-    latitude?.measurement,
-    longitude?.measurement
-  );
   return (
-    <HStack id={id} width="100%">
+    <VStack id={id}>
       <InputGroup size="md">
         <NumberInput
           placeholder="Latitude"
@@ -74,7 +70,7 @@ export default function Coordinates({
           </NumberInputStepper>
         </NumberInput>
         <InputRightAddon>
-          <span>&#176;</span>
+          <span>DEG</span>
         </InputRightAddon>
         <Select
           value={latitude?.hemisphere || "N"}
@@ -125,7 +121,7 @@ export default function Coordinates({
           </NumberInputStepper>
         </NumberInput>
         <InputRightAddon>
-          <span>&#176;</span>
+          <span>DEG</span>
         </InputRightAddon>
         <Select
           value={longitude?.hemisphere}
@@ -149,6 +145,6 @@ export default function Coordinates({
           <option value="W">West</option>
         </Select>
       </InputGroup>
-    </HStack>
+    </VStack>
   );
 }
