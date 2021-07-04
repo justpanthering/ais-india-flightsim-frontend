@@ -61,6 +61,7 @@ model Runway {
   longitudeHemisphere         String
   elevation                   Float
   visualSlopeIndicationSystem String?
+  trueBearing                 Float    @default(0)
 }
 
 model Chart {

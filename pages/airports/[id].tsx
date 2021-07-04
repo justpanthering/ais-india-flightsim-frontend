@@ -56,7 +56,10 @@ export default function AirportDetail({
             description={`${airport.aerodomeName}, ${airport.localeName}`}
             verify={!!airport.aerodomeName && !!airport.localeName}
           />
-          <Description title="Elevation" description={`${airport.elevation}`} />
+          <Description
+            title="Elevation"
+            description={`${airport.elevation} feet`}
+          />
           <Description
             title="Coordinates"
             description={
@@ -84,10 +87,11 @@ export default function AirportDetail({
           <Thead>
             <Tr>
               <Th>Runway</Th>
-              <Th>Dimension</Th>
+              <Th>Dimension (meters)</Th>
+              <Th>True Bearing (DEG)</Th>
               <Th>Surface</Th>
               <Th>Coordinates</Th>
-              <Th>Elevation</Th>
+              <Th>Elevation (feet)</Th>
               <Th>Visual Slope Indication System</Th>
             </Tr>
           </Thead>
@@ -96,6 +100,7 @@ export default function AirportDetail({
               <Tr key={`runway_${runway.name}`}>
                 <Td>{runway.name}</Td>
                 <Td>{runway.dimension || "--"}</Td>
+                <Td>{runway.trueBearing || "--"}</Td>
                 <Td>{runway.surface || "--"}</Td>
                 <Td>
                   {runway.coordinates.latitude.measurement &&

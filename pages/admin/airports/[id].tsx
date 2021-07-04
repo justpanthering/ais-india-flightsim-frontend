@@ -166,6 +166,7 @@ export default function ({
                 ...runway,
                 dimension: Number(runway.dimension),
                 elevation: Number(runway.elevation),
+                trueBearing: Number(runway.trueBearing),
               })),
               radarTrafficCommunicationFrequency:
                 values.radarTrafficCommunicationFrequency.map((freq) =>
@@ -204,7 +205,6 @@ export default function ({
                   status: "success",
                   isClosable: true,
                 });
-                // setAirport(res);
                 router.push(
                   pathAirportDetails.replace(":id", res.id.toString())
                 );
@@ -219,7 +219,7 @@ export default function ({
               }
             } else {
               try {
-                const res = await createAirport(parsedValues);
+                await createAirport(parsedValues);
                 toast({
                   title: `Success!`,
                   description: "Airport created successfully",
@@ -452,6 +452,34 @@ export default function ({
                                 )}
                               />
                               <FormikField
+                                name={`runways[${i}].trueBearing`}
+                                label="True Bearing"
+                                helperText="True bearing of the runway in degrees"
+                                touched={touched}
+                                errors={errors}
+                                isRequired
+                                errorNameArr={[`runways[${i}].trueBearing`]}
+                                render={(props: FieldInputProps<any>) => (
+                                  <InputGroup size="sm">
+                                    <NumberInput
+                                      {...props}
+                                      id={`runways.${i}.trueBearing`}
+                                      onChange={(val) =>
+                                        setFieldValue(props.name, val)
+                                      }
+                                      step={0.5}
+                                    >
+                                      <NumberInputField />
+                                      <NumberInputStepper>
+                                        <NumberIncrementStepper />
+                                        <NumberDecrementStepper />
+                                      </NumberInputStepper>
+                                    </NumberInput>
+                                    <InputRightAddon>DEG</InputRightAddon>
+                                  </InputGroup>
+                                )}
+                              />
+                              <FormikField
                                 name={`runways[${i}].elevation`}
                                 label="Elevation"
                                 helperText="Runway elevation in feet"
@@ -635,7 +663,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -696,7 +724,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -758,7 +786,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -820,7 +848,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -881,7 +909,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />
@@ -943,7 +971,7 @@ export default function ({
                                           <NumberDecrementStepper />
                                         </NumberInputStepper>
                                       </NumberInput>
-                                      <InputRightAddon>FM</InputRightAddon>
+                                      <InputRightAddon>MHz</InputRightAddon>
                                     </InputGroup>
                                   )}
                                 />

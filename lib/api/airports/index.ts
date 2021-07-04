@@ -68,11 +68,6 @@ export function getAirportDetailsForDatabase(
       airportData.radarTrafficCommunicationFrequency,
     towerTrafficCommunicationFrequency:
       airportData.towerTrafficCommunicationFrequency,
-    // charts: {
-    //   create: airportData.charts.map((chart) => ({
-    //     ...chart,
-    //   })),
-    // },
   };
 }
 
@@ -89,15 +84,6 @@ export function getRunwayDetailsForDatabase(
     longitudeMeasurement: runway.coordinates.longitude.measurement,
     longitudeHemisphere: runway.coordinates.longitude.hemisphere,
     visualSlopeIndicationSystem: runway.visualSlopeIndicationSystem,
+    trueBearing: runway.trueBearing,
   };
 }
-
-// export function getChartDetailsForDatabase(chart: {
-//   name: string;
-//   url: string;
-// }): Omit<ChartDatabase, "id" | "airportId"> {
-//   return {
-//     name: chart.name,
-
-//   };
-// }

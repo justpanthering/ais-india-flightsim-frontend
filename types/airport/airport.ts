@@ -15,6 +15,7 @@ export interface Runway {
   };
   elevation: number;
   visualSlopeIndicationSystem: string;
+  trueBearing: number;
 }
 
 export interface Airport {
