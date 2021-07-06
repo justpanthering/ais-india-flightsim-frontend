@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Box, Button, Flex, Spacer, HStack } from "@chakra-ui/react";
+import { Box, Button, Spacer, HStack } from "@chakra-ui/react";
 import { signIn, signOut, useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 
@@ -20,16 +20,16 @@ export default function Layout({
   const [session, loading] = useSession();
   const router = useRouter();
   return (
-    <>
+    <Box minW="420px">
       <HStack
         bg="primary"
-        // opacity="0.7"
         p="1rem 2rem"
         color="white"
         w="100%"
         position="fixed"
-        height="4rem"
+        min-height="4rem"
         zIndex={10}
+        minW="420px"
       >
         <Box>
           <Link href={routes.home}>
@@ -54,12 +54,12 @@ export default function Layout({
         )}
       </HStack>
       <Box
-        bg={router.pathname === routes.home ? "none" : "primaryBg"}
         minH="100vh"
+        h="100%"
         paddingTop={router.pathname === routes.home ? "0" : "6rem"}
       >
         {children}
       </Box>
-    </>
+    </Box>
   );
 }
