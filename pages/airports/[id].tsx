@@ -14,6 +14,8 @@ import {
   Button,
   Tag,
   HStack,
+  useMediaQuery,
+  Divider,
 } from "@chakra-ui/react";
 import Description from "../../components/Description";
 import GroupWithHeader from "../../components/GroupWithHeader";
@@ -31,6 +33,7 @@ export default function AirportDetail({
   const [airport, setAirport] = useState<Airport>();
   const [session, isLoading] = useSession();
   const router = useRouter();
+  const [isScreenWidthGreater820px] = useMediaQuery("(min-width: 820px)");
   useEffect(() => {
     if (airportFromServerProps && !airport) {
       setAirport(airportFromServerProps);
@@ -76,37 +79,92 @@ export default function AirportDetail({
             }
           />
           <Description
+            isDividerRequired={false}
             title="Address"
-            description={<p style={{ whiteSpace: "pre" }}>{airport.address}</p>}
+            description={<p>{airport.address}</p>}
             verify={!!airport.address}
           />
         </VStack>
       </GroupWithHeader>
       <GroupWithHeader title="Runways">
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Runway</Th>
-              <Th>Dimension (meters)</Th>
-              <Th>True Bearing (DEG)</Th>
-              <Th>Surface</Th>
-              <Th>Coordinates</Th>
-              <Th>Elevation (feet)</Th>
-              <Th>Visual Slope Indication System</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {airport.runways.map((runway) => (
-              <Tr key={`runway_${runway.name}`}>
-                <Td>{runway.name}</Td>
-                <Td>{runway.dimension || "--"}</Td>
-                <Td>{runway.trueBearing || "--"}</Td>
-                <Td>{runway.surface || "--"}</Td>
-                <Td>
-                  {runway.coordinates.latitude.measurement &&
-                  runway.coordinates.latitude.hemisphere &&
-                  runway.coordinates.longitude.measurement &&
-                  runway.coordinates.longitude.hemisphere ? (
+        {isScreenWidthGreater820px ? (
+          <Table size="sm">
+            <Thead>
+              <Tr>
+                <Th>Runway</Th>
+                <Th>Dimension (meters)</Th>
+                <Th>True Bearing (DEG)</Th>
+                <Th>Surface</Th>
+                <Th>Coordinates</Th>
+                <Th>Elevation (feet)</Th>
+                <Th>Visual Slope Indication System</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {airport.runways.map((runway) => (
+                <Tr key={`runway_${runway.name}`}>
+                  <Td>{runway.name}</Td>
+                  <Td>{runway.dimension || "--"}</Td>
+                  <Td>{runway.trueBearing || "--"}</Td>
+                  <Td>{runway.surface || "--"}</Td>
+                  <Td>
+                    {runway.coordinates.latitude.measurement &&
+                    runway.coordinates.latitude.hemisphere &&
+                    runway.coordinates.longitude.measurement &&
+                    runway.coordinates.longitude.hemisphere ? (
+                      <VStack>
+                        <span>
+                          {runway.coordinates.latitude.measurement}{" "}
+                          {runway.coordinates.latitude.hemisphere}
+                        </span>
+                        <span>
+                          {runway.coordinates.longitude.measurement}{" "}
+                          {runway.coordinates.longitude.hemisphere}
+                        </span>
+                      </VStack>
+                    ) : (
+                      "--"
+                    )}
+                  </Td>
+                  <Td>{runway.elevation || "--"}</Td>
+                  <Td>
+                    <p style={{ whiteSpace: "pre" }}>
+                      {runway.visualSlopeIndicationSystem || "--"}
+                    </p>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        ) : (
+          airport.runways.map((runway) => (
+            <GroupWithHeader title={runway.name} key={`ruwnay_${runway.name}`}>
+              <VStack>
+                <Description title="Designation" description={runway.name} />
+                <Description
+                  title="Dimension"
+                  description={`${runway.dimension} meters`}
+                  verify={!!runway.dimension}
+                />
+                <Description
+                  title="True Bearing"
+                  description={`${runway.trueBearing} DEG`}
+                  verify={!!runway.trueBearing}
+                />
+                <Description
+                  title="Surface"
+                  description={runway.surface}
+                  verify={!!runway.surface}
+                />
+                <Description
+                  title="Coordinates"
+                  verify={
+                    !!runway.coordinates.latitude.measurement &&
+                    !!runway.coordinates.latitude.hemisphere &&
+                    !!runway.coordinates.longitude.measurement &&
+                    !!runway.coordinates.longitude.hemisphere
+                  }
+                  description={
                     <VStack>
                       <span>
                         {runway.coordinates.latitude.measurement}{" "}
@@ -117,20 +175,32 @@ export default function AirportDetail({
                         {runway.coordinates.longitude.hemisphere}
                       </span>
                     </VStack>
-                  ) : (
-                    "--"
-                  )}
-                </Td>
-                <Td>{runway.elevation || "--"}</Td>
-                <Td>
-                  <p style={{ whiteSpace: "pre" }}>
-                    {runway.visualSlopeIndicationSystem || "--"}
-                  </p>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+                  }
+                />
+                <Description
+                  title="Elevation"
+                  description={runway.elevation}
+                  verify={!!runway.elevation}
+                />
+                <Description
+                  title="Surface"
+                  description={runway.surface}
+                  verify={!!runway.surface}
+                />
+                <Description
+                  isDividerRequired={false}
+                  title="Visual Slope Indication System"
+                  description={
+                    <p style={{ whiteSpace: "pre" }}>
+                      {runway.visualSlopeIndicationSystem}
+                    </p>
+                  }
+                  verify={!!runway.visualSlopeIndicationSystem}
+                />
+              </VStack>
+            </GroupWithHeader>
+          ))
+        )}
       </GroupWithHeader>
       <GroupWithHeader title="Communication">
         <VStack>
@@ -200,22 +270,26 @@ export default function AirportDetail({
                 ))}
               </HStack>
             }
+            isDividerRequired={false}
             verify={airport.groundTrafficCommunicationFrequency.length > 0}
           />
         </VStack>
       </GroupWithHeader>
       {!!airport.charts.length && (
         <GroupWithHeader title="Charts">
-          {airport.charts.map((chart) => (
-            <Description
-              key={`chart_${chart.url}`}
-              title={chart.name}
-              description={
-                <a target="_blank" rel="noreferrer" href={chart.url}>
-                  {chart.url}
-                </a>
-              }
-            />
+          {airport.charts.map((chart, i) => (
+            <>
+              <Description
+                key={`chart_${chart.url}`}
+                title={chart.name}
+                description={
+                  <a target="_blank" rel="noreferrer" href={chart.url}>
+                    {chart.url}
+                  </a>
+                }
+                isDividerRequired={i < airport.charts.length - 1}
+              />
+            </>
           ))}
         </GroupWithHeader>
       )}

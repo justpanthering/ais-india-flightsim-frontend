@@ -45,6 +45,7 @@ export default function Coordinates({
     <VStack id={id}>
       <InputGroup size="md">
         <NumberInput
+          w="70%"
           placeholder="Latitude"
           value={latitude?.measurement}
           onChange={(val) => {
@@ -63,7 +64,7 @@ export default function Coordinates({
           }}
           step={0.5}
         >
-          <NumberInputField w="300px" />
+          <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />
@@ -96,6 +97,7 @@ export default function Coordinates({
       </InputGroup>
       <InputGroup size="md">
         <NumberInput
+          w="70%"
           placeholder="Longitude"
           value={longitude?.measurement}
           onChange={(val) => {
@@ -114,7 +116,7 @@ export default function Coordinates({
           }}
           step={0.5}
         >
-          <NumberInputField w="300px" />
+          <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />

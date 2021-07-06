@@ -8,6 +8,7 @@ import NProgress from "nprogress";
 import router from "next/router";
 import "nprogress/nprogress.css";
 import { myTheme } from "../styles/theme";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   useEffect(() => {
@@ -28,13 +29,21 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   });
 
   return (
-    <Provider session={pageProps.session}>
-      <ChakraProvider theme={myTheme}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ChakraProvider>
-    </Provider>
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
+        />
+      </Head>
+      <Provider session={pageProps.session}>
+        <ChakraProvider theme={myTheme}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ChakraProvider>
+      </Provider>
+    </>
   );
 }
 export default MyApp;

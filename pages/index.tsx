@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 import { GetStaticPropsResult } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { getAirportList } from "../api-client/airport";
